@@ -1,0 +1,41 @@
+def encrypt(text, key):
+    encrypted = ""
+    for char in text:
+        if char.isupper():
+            c = ord(char) + (key % 26)
+            if c > ord('Z'):
+                c -= 26
+            encrypted += chr(c)
+        elif char.islower():
+            c = ord(char) + (key % 26)
+            if c > ord('z'):
+                c -= 26
+            encrypted += chr(c)
+        else:
+            encrypted += char
+    return encrypted
+
+def decrypt(text, key):
+    decrypted = ""
+    for char in text:
+        if char.isupper():
+            c = ord(char) - (key % 26)
+            if c < ord('A'):
+                c += 26
+            decrypted += chr(c)
+        elif char.islower():
+            c = ord(char) - (key % 26)
+            if c < ord('a'):
+                c += 26
+            decrypted += chr(c)
+        else:
+            decrypted += char
+    return decrypted
+
+text = input("Enter any string: ")
+key = int(input("Enter the key: "))
+encrypted_text = encrypt(text, key)
+print("Encrypted string is:", encrypted_text)
+decrypted_text = decrypt(encrypted_text, key)
+print("Decrypted string is:", decrypted_text)
+
