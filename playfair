@@ -1,0 +1,101 @@
+matrix = [['' for _ in range(5)] for _ in range(5)]
+
+def generate_key_matrix(key):
+    key = key.upper().replace('J', 'I')
+    key = ''.join(filter(str.isalpha, key))
+    used = [False] * 26
+    row = col = 0
+    for c in key:
+        idx = ord(c) - ord('A')
+        if not used[idx]:
+            matrix[row][col] = c
+            used[idx] = True
+            col += 1
+            if col == 5:
+                col = 0
+                row += 1
+    for c in range(ord('A'), ord('Z') + 1):
+        if chr(c) == 'J':
+            continue
+        idx = c - ord('A')
+        if not used[idx]:
+            matrix[row][col] = chr(c)
+            used[idx] = True
+            col += 1
+            if col == 5:
+                col = 0
+                row += 1
+
+def find_position(c):
+    for row in range(5):
+        for col in range(5):
+            if matrix[row][col] == c:
+                return row, col
+    return None
+
+def encrypt(plaintext):
+    plaintext = plaintext.upper().replace('J', 'I')
+    plaintext = ''.join(filter(str.isalpha, plaintext))
+    sb = []
+    i = 0
+    while i < len(plaintext):
+        first = plaintext[i]
+        second = 'X'
+        if i + 1 < len(plaintext):
+            second = plaintext[i + 1]
+            if first == second:
+                second = 'X'
+                i += 1
+            else:
+                i += 2
+        else:
+            i += 1
+        sb.append(first)
+        sb.append(second)
+    encrypted = []
+    for i in range(0, len(sb), 2):
+        a, b = sb[i], sb[i + 1]
+        r1, c1 = find_position(a)
+        r2, c2 = find_position(b)
+        if r1 == r2:
+            encrypted.append(matrix[r1][(c1 + 1) % 5])
+            encrypted.append(matrix[r2][(c2 + 1) % 5])
+        elif c1 == c2:
+            encrypted.append(matrix[(r1 + 1) % 5][c1])
+            encrypted.append(matrix[(r2 + 1) % 5][c2])
+        else:
+            encrypted.append(matrix[r1][c2])
+            encrypted.append(matrix[r2][c1])
+    return ''.join(encrypted)
+
+def decrypt(ciphertext):
+    decrypted = []
+    for i in range(0, len(ciphertext), 2):
+        a, b = ciphertext[i], ciphertext[i + 1]
+        r1, c1 = find_position(a)
+        r2, c2 = find_position(b)
+        if r1 == r2:
+            decrypted.append(matrix[r1][(c1 + 4) % 5])
+            decrypted.append(matrix[r2][(c2 + 4) % 5])
+        elif c1 == c2:
+            decrypted.append(matrix[(r1 + 4) % 5][c1])
+            decrypted.append(matrix[(r2 + 4) % 5][c2])
+        else:
+            decrypted.append(matrix[r1][c2])
+            decrypted.append(matrix[r2][c1])
+    return ''.join(decrypted)
+
+def print_matrix():
+    print("Key Matrix:")
+    for row in matrix:
+        print(' '.join(row))
+
+key = input("Enter the key: ")
+plaintext = input("Enter the plaintext: ")
+generate_key_matrix(key)
+print_matrix()
+encrypted = encrypt(plaintext)
+print("Encrypted Text:", encrypted)
+decrypted = decrypt(encrypted)
+print("Decrypted Text:", decrypted)
+
