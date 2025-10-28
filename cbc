@@ -1,0 +1,29 @@
+import os
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+
+block_size = 16
+key = os.urandom(16)  
+iv = os.urandom(16)   
+
+def encrypt_cbc(plaintext, key, iv):
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    padded_plaintext = pad(plaintext.encode(), block_size)
+    ciphertext = cipher.encrypt(padded_plaintext)
+    return ciphertext
+
+def decrypt_cbc(ciphertext, key, iv):
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    decrypted_data = cipher.decrypt(ciphertext)
+    plaintext = unpad(decrypted_data, block_size)
+    return plaintext.decode()
+inp_text = input("Enter the String: ")
+
+encrypted = encrypt_cbc(inp_text, key, iv)
+
+print("Original Text:", inp_text)
+print("IV (hex):", iv.hex())
+print("Encrypted (hex):", encrypted.hex())
+
+decrypted = decrypt_cbc(encrypted, key, iv)
+print("Decrypted Text:", decrypted)
