@@ -1,0 +1,30 @@
+def main():
+    p = 23  
+    g = 5   
+
+    print("Public parameters:")
+    print(f"Prime modulus (p): {p}")
+    print(f"Base (g): {g}")
+    a = int(input("Enter private key for Alice (a): "))
+    b = int(input("Enter private key for Bob (b): "))
+
+    A = pow(g, a, p)
+    B = pow(g, b, p)
+
+    print(f"Alice's public key (A): {A}")
+    print(f"Bob's public key (B): {B}")
+
+    
+    secret_key_alice = pow(B, a, p)
+    secret_key_bob = pow(A, b, p)
+
+    print(f"Shared secret computed by Alice: {secret_key_alice}")
+    print(f"Shared secret computed by Bob: {secret_key_bob}")
+
+    if secret_key_alice == secret_key_bob:
+        print(" Success! Both shared secrets match.")
+    else:
+        print(" Error! Shared secrets do not match.")
+
+if __name__ == "__main__":
+    main()
