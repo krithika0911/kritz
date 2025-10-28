@@ -1,0 +1,54 @@
+import numpy as np
+
+def get_key_and_message():
+    print("Enter 3x3 matrix for key (should be invertible mod 26):")
+    key_matrix = []
+    for _ in range(3):
+        row = list(map(float, input().split()))
+        key_matrix.append(row)
+    key_matrix = np.array(key_matrix)
+
+    msg = input("Enter a 3-letter string (lowercase): ").lower()
+    if len(msg) != 3:
+        print("Error: Message length must be exactly 3.")
+        exit(1)
+    message_vector = np.array([[ord(c) - ord('a') for c in msg]], dtype=float)
+    return key_matrix, message_vector
+
+def mod_inverse_matrix(matrix):
+    det = int(round(np.linalg.det(matrix))) % 26
+    det_inv = -1
+    for i in range(26):
+        if (det * i) % 26 == 1:
+            det_inv = i
+            break
+    if det_inv == -1:
+        print("Key matrix is not invertible modulo 26.")
+        exit(1)
+    adj = np.round(det * np.linalg.inv(matrix)).astype(int) % 26
+    inv_matrix = (det_inv * adj) % 26
+    print("Inverse matrix mod 26 is:")
+    for row in inv_matrix:
+        print(' '.join(str(int(x)) for x in row))
+    return inv_matrix
+
+def encrypt(message_vector, key_matrix):
+    res = np.dot(message_vector, key_matrix) % 26
+    print("\nEncrypted string is: ", end='')
+    for val in res[0]:
+        print(chr(int(round(val)) + ord('a')), end='')
+    print()
+    return res
+
+def decrypt(encrypted_vector, inverse_matrix):
+    decrypted = np.dot(encrypted_vector, inverse_matrix) % 26
+    print("Decrypted string is: ", end='')
+    for val in decrypted[0]:
+        print(chr(int(round(val)) + ord('a')), end='')
+    print()
+
+key_matrix, message_vector = get_key_and_message()
+encrypted_vector = encrypt(message_vector, key_matrix)
+inverse_matrix = mod_inverse_matrix(key_matrix)
+decrypt(encrypted_vector, inverse_matrix)
+
