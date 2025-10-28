@@ -1,0 +1,30 @@
+import random
+from math import gcd
+
+def generate_e(phi):
+    while True:
+        e = random.randrange(2, phi)
+        if gcd(e, phi) == 1:
+            return e
+
+p = int(input("Enter a prime number (p): "))
+q = int(input("Enter another prime number (q): "))
+
+n = p * q 
+phi = (p - 1) * (q - 1)
+
+e = generate_e(phi)
+d = pow(e, -1, phi)
+
+print("Public key (e, n): (", e, ",", n, ")")
+print("Private key (d, n): (", d, ",", n, ")")
+
+message = int(input("Enter the message to encrypt (as a number): "))
+
+if message >= n:
+    print("Message must be less than n. Please enter smaller number.")
+else:
+    encrypted = pow(message, e, n)
+    print("Encrypted message:", encrypted)
+    decrypted = pow(encrypted, d, n)
+    print("Decrypted message:", decrypted)
