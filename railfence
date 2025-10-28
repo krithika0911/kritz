@@ -1,0 +1,40 @@
+import math
+
+def encryption(text, depth):
+    length = len(text)
+    columns = math.ceil(length / depth)
+    encrypt = [['X' for _ in range(columns)] for _ in range(depth)]
+    index = 0
+    for i in range(depth):
+        for j in range(columns):
+            if index < length:
+                encrypt[i][j] = text[index]
+                index += 1
+    encrypted = ''
+    for j in range(columns):
+        for i in range(depth):
+            encrypted += encrypt[i][j]
+    return encrypted
+
+def decryption(cipher, depth):
+    length = len(cipher)
+    columns = math.ceil(length / depth)
+    decrypt = [['' for _ in range(columns)] for _ in range(depth)]
+    index = 0
+    for j in range(columns):
+        for i in range(depth):
+            if index < length:
+                decrypt[i][j] = cipher[index]
+                index += 1
+    decrypted = ''
+    for i in range(depth):
+        for j in range(columns):
+            decrypted += decrypt[i][j]
+    return decrypted
+
+text = input("Enter the text: ")
+depth = int(input("Enter the depth: "))
+encrypted_text = encryption(text, depth)
+print(encrypted_text)
+decrypted_text = decryption(encrypted_text, depth)
+print(decrypted_text)
